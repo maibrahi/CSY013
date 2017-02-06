@@ -19,12 +19,12 @@
     </style>
   </head>
   <body>
-    <h1>Python Social Auth 8</h1>
+    <h1>Python Social Auth</h1>
 
     <div class="buttons">
       {% if user.is_authenticated %}
         <div class="user-details">
-          You are logged in as <code>{{ user.username }}</code>!
+          You are logged in as <code>{{ user.first_name }}</code>!
         </div>
       {% endif %}
 
@@ -63,33 +63,6 @@
             {% endfor %}
           </div>
         {% endfor %}
-      </div>
-
-      <div class="legacy">
-        {% for name, backend in available_backends|legacy_backends %}
-          {% set association = associated.get(name) %}
-          {% if association %}
-            <form class="disconnect-form"
-                  action="{{ url("social:disconnect_individual", backend=association.provider, association_id=association.id) }}"
-                  method="post">
-              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-              <a class="btn btn-danger" name="{{ backend|backend_class }}" href="#">
-                <i class="fa fa-{{ name|icon_name }}"></i>
-                Disconnect {{ backend|backend_name }}
-              </a>
-            </form>
-          {% else %}
-            <a class="btn btn-default" name="{{ backend|backend_class }}" href="{{ url("social:begin", backend=name) }}">
-              <i class="fa fa-{{ name|icon_name }}"></i>
-              {{ backend|backend_name }}
-            </a>
-          {% endif %}
-        {% endfor %}
-
-        <a class="btn btn-info" name="ajax-login" href="#">
-          <i class="fa fa-refresh"></i>
-          Ajax
-        </a>
       </div>
 
       <div>

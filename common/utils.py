@@ -18,9 +18,13 @@ def associations(user, strategy):
 
 def common_context(authentication_backends, strategy, user=None, plus_id=None, **extra):
     """Common view context"""
+
+    # print(load_backends(authentication_backends))
+
     context = {
         'user': user,
         'available_backends': load_backends(authentication_backends),
+        # [item for item in iterable if function(item)]
         'associated': {}
     }
 

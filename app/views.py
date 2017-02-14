@@ -2,9 +2,12 @@ import json
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect
+from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout, login
+from django.shortcuts import render_to_response
+
+from .utils import common_context
 
 from social_core.backends.oauth import BaseOAuth1, BaseOAuth2
 from social_core.backends.google import GooglePlusAuth
@@ -13,6 +16,18 @@ from social_django.utils import psa, load_strategy
 
 from .decorators import render_to
 
+from .models import Module, Student
+
+def general_context(request, view_vars):
+    return common_context(
+        settings.AUTHENTICATION_BACKENDS,
+        load_strategy(),
+        request.user,
+        plus_id=getattr(settings, 'SOCIAL_AUTH_GOOGLE_PLUS_KEY', None),
+        # **out,
+        **view_vars
+    )
+
 
 def logout(request):
     """Logs out user"""
@@ -20,21 +35,21 @@ def logout(request):
     return redirect('/')
 
 
-@render_to('home.html')
+@render_to('login.html')
 def home(request):
     """Home view, displays login mechanism"""
     if request.user.is_authenticated():
-        return redirect('done')
+        return redirect('/modules')
 
 
 @login_required
-@render_to('home.html')
+@render_to('login.html')
 def done(request):
     """Login complete view, displays user data"""
     pass
 
 
-@render_to('home.html')
+@render_to('login.html')
 def validation_sent(request):
     """Email validation sent confirmation page"""
     return {
@@ -43,7 +58,7 @@ def validation_sent(request):
     }
 
 
-@render_to('home.html')
+@render_to('login.html')
 def require_email(request):
     """Email required page"""
     strategy = load_strategy()
@@ -72,3 +87,17 @@ def ajax_auth(request, backend):
     login(request, user)
     data = {'id': user.id, 'username': user.username}
     return HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+# Modules
+
+@login_required
+# @render_to('modules/index.html')
+def modules_index(request):
+    modules = Module.objects.all()
+
+    return render(
+        request,
+        'modules/index.html',
+        general_context(request, {"modules": modules})
+    )

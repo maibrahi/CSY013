@@ -1,3 +1,6 @@
 django
+django-extensions
 django-jinja
 social-auth-app-django
+psycopg2
+pdfkit

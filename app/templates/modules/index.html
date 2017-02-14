@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h3>All Modules</h3>
+
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+
+
+    <tbody>
+      {% for module in modules %}
+        <tr>
+          <td class="selectable">
+            <a href="/modules/{{ module.id }}">{{ module.code }}</a>
+          </td>
+          <td>{{ module.name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}

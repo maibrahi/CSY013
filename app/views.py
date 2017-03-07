@@ -16,7 +16,10 @@ from social_django.utils import psa, load_strategy
 
 from .decorators import render_to
 
-from .models import Module, Student
+from .models import Module, Student, TimeSlot
+
+from simpletable import *
+
 
 def general_context(request, view_vars):
     return common_context(
@@ -99,5 +102,44 @@ def modules_index(request):
     return render(
         request,
         'modules/index.html',
-        general_context(request, {"modules": modules})
+        general_context(request, { "modules": modules })
     )
+
+@login_required
+# @render_to('modules/index.html')
+def modules_show(request, **kwargs):
+    module = Module.objects.get(pk=kwargs["id"])
+
+    students = module.get_students()
+
+    return render(
+        request,
+        'modules/show.html',
+        general_context(request, {
+            "module": module,
+            "students": students,
+            "time_slots": module.timeslot_set.all()
+        })
+    )
+
+
+
+
+@login_required
+# @render_to('modules/index.html')
+def sheet(request, **kwargs):
+    # module = Module.objects.get(pk=kwargs["id"])
+    ts = TimeSlot.objects.get(pk=kwargs["id"])
+    students = ts.get_students()
+    table_rows = [[s.name(), s.id, ''] for s in students]
+
+    t = SimpleTable(table_rows,
+        header_row=['Name', 'Student Number', 'Signature'],
+        css_class='mytable'
+    )
+    page = HTMLPage()
+    page.add_table(t)
+    print(str(page))
+    return HttpResponse(str(page))
+    # return HttpResponse(table_rows.join(","))
+

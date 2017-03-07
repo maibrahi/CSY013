@@ -1,6 +1,6 @@
 import codecs
 
-#this simple table allow you to create a table
+
 class SimpleTableCell(object):
     """A table class to create table cells.
     Example:
@@ -19,9 +19,9 @@ class SimpleTableCell(object):
     def __str__(self):
         """Return the HTML code for the table cell."""
         if self.header:
-            return '<th>%s</th>' % (self.text)
+            return '<th>%s</th>' %(self.text)
         else:
-            return '<td>%s</td>' % (self.text)
+            return '<td>%s</td>' %(self.text)
 
 
 class SimpleTableRow(object):
@@ -34,7 +34,6 @@ class SimpleTableRow(object):
     cell2 = SimpleTableCell('world!')
     row = SimpleTableRow([cell1, cell2])
     """
-
     def __init__(self, cells=[], header=False):
         """Table row constructor.
         Keyword arguments:
@@ -48,9 +47,9 @@ class SimpleTableRow(object):
             self.cells = cells
         else:
             self.cells = [SimpleTableCell(cell, header=header) for cell in cells]
-
+        
         self.header = header
-
+        
     def __str__(self):
         """Return the HTML code for the table row and its cells as a string."""
         row = []
@@ -61,7 +60,7 @@ class SimpleTableRow(object):
             row.append(str(cell))
 
         row.append('</tr>')
-
+        
         return '\n'.join(row)
 
     def __iter__(self):
@@ -91,7 +90,6 @@ class SimpleTable(object):
     rows = SimpleTableRow(['Hello,', 'world!'])
     table = SimpleTable(rows)
     """
-
     def __init__(self, rows=[], header_row=None, css_class=None):
         """Table constructor.
         Keyword arguments:
@@ -132,7 +130,7 @@ class SimpleTable(object):
             table.append(str(row))
 
         table.append('</table>')
-
+        
         return '\n'.join(table)
 
     def __iter__(self):
@@ -152,8 +150,7 @@ class SimpleTable(object):
 
 class HTMLPage(object):
     """A class to create HTML pages containing CSS and tables."""
-
-    def __init__(self, tables=[], css1=[], encoding="utf-8"):
+    def __init__(self, tables=[], css=None, encoding="utf-8"):
         """HTML page constructor.
         Keyword arguments:
         tables -- List of SimpleTable objects
@@ -162,27 +159,61 @@ class HTMLPage(object):
         encoding -- Characters encoding. Default: UTF-8
         """
         self.tables = tables
-        self.css = css1
+        self.css = css = """
+            table.mytable {
+                font-family: times;
+                font-size:17px;
+                color:#000000;
+                border-width: 1px;
+                border-color: #eeeeee;
+                border-collapse: collapse;
+                background-color: #ffffff;
+                width: 100%;
+                max-width:550px;
+                table-layout:fixed;
+            }
+            table.mytable th {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #eeeeee;
+                background-color: #e6eed6;
+                color:#000000;
+            }
+            table.mytable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #eeeeee;
+            }
+            #code {
+                display:inline;
+                font-family: courier;
+                color: #3d9400;
+            }
+            #string {
+                display:inline;
+                font-weight: bold;
+            }
+        """
         self.encoding = encoding
 
     def __str__(self):
         """Return the HTML page as a string."""
-        page1 = []
+        page = []
 
         if self.css:
-            #edit her to add css to the code
-            page1.append('<style type="text/css">\ntable,th,td{border:'
-                         ' 1px solid black;border-collapse: collapse;}th,td{padding: 15px;}\n</style>')
+            page.append('<style type="text/css">\n%s\n</style>' % self.css)
 
         # Set encoding
-        page1.append('<meta http-equiv="Content-Type" content="text/html;'
-                     'charset=%s">' % self.encoding)
+        page.append('<meta http-equiv="Content-Type" content="text/html;'
+            'charset=%s">' % self.encoding)
 
         for table in self.tables:
-            page1.append(str(table))
-            page1.append('<br />')
+            page.append(str(table))
+            page.append('<br />')
 
-        return '\n'.join(page1)
+        return '\n'.join(page)
 
     def __iter__(self):
         """Iterate through tables"""
@@ -208,60 +239,26 @@ def fit_data_to_columns(data, num_cols):
     fitted_data = fit_data_to_columns(test_data, 5)
     table = SimpleTable(fitted_data)
     """
-    num_iterations = len(data) // num_cols
+    num_iterations = len(data)/num_cols
 
-    if len(data) % num_cols != 0:
+    if len(data)%num_cols != 0:
         num_iterations += 1
 
-    return [data[num_cols * i:num_cols * i + num_cols] for i in range(num_iterations)]
+    return [data[num_cols*i:num_cols*i + num_cols] for i in range(num_iterations)]
 
 
-if __name__ == "__main__":
-    css = """
-    table.mytable {
-        font-family: times;
-        font-size:12px;
-        color:#000000;
-        border-width: 1px;
-        border-color: #eeeeee;
-        border-collapse: collapse;
-        background-color: #ffffff;
-        width=100%;
-        max-width:550px;
-        table-layout:fixed;
-    }
-    table.mytable th {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #eeeeee;
-        background-color: #e6eed6;
-        color:#000000;
-    }
-    table.mytable td {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #eeeeee;
-    }
-    #code {
-        display:inline;
-        font-family: courier;
-        color: #3d9400;
-    }
-    #string {
-        display:inline;
-        font-weight: bold;
-    }
-    """
-    table1 = SimpleTable([['Hello,', 'world!'], ['How', 'are', 'you?']],
-                         header_row=['Header1', 'Header2', 'Header3'],
-                         css_class='mytable')
-    table2 = SimpleTable([['Testing', 'this'], ['table', 'here']],
-                         css_class='mytable')
+### Example usage ###
+# if __name__ == "__main__":
+#     table1 = SimpleTable([['Hello,', 'world!'], ['How', 'are', 'you?']],
+#             header_row=['Header1', 'Header2', 'Header3'],
+#             css_class='mytable')
+#     table2 = SimpleTable([['Testing', 'this'], ['table', 'here']],
+#             css_class='mytable')
 
-    page = HTMLPage()
-    page.add_table(table1)
-    page.add_table(table2)
-    page.css = css
-    page.save("test.html")
+#     page = HTMLPage()
+#     page.add_table(table1)
+#     page.add_table(table2)
+#     page.css = css
+#     page.save("test.html")
+
+

@@ -22,6 +22,9 @@ class Module(models.Model):
     def get_students(self):
         return Student.objects.filter(module_ids__contains=[self.id])
 
+    def __str__(self):
+        return self.name
+
 class Student(models.Model):
     module_ids = ArrayField(models.IntegerField())
     first_name = models.CharField(max_length=200)

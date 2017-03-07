@@ -101,3 +101,24 @@ def modules_index(request):
         'modules/index.html',
         general_context(request, {"modules": modules})
     )
+
+@login_required
+# @render_to('modules/modules_students.html')
+def modules_students(request, module_id):
+    code = Module.objects.get(pk=module_id).code
+    students = Module.objects.get(pk=module_id).get_students()
+    return render(
+        request,
+        'modules/module_students.html',
+        general_context(request, {"students": students, "code": code})
+    )
+
+@login_required
+# @render_to('modules/modules_students.html')
+def students_list(request):
+    all_students = Student.objects.all()
+    return render(
+        request,
+        'modules/students.html',
+        general_context(request, {"students": all_students})
+    )

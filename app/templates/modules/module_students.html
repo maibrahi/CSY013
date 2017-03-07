@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h3>{{ code }}</h3>
+  <div class="ui grid">
+ <div class="eight wide column">
+
+
+
+  <table class="ui striped celled table">
+    <thead>
+      <tr>
+        <th>First Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+        <tr>
+          <td>{{ student.last_name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  </div>
+{% endblock content %}

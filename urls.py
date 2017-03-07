@@ -14,6 +14,7 @@ urlpatterns = [
         name='ajax-auth'),
     url(r'^email/$', app_views.require_email, name='require_email'),
     # url(r'^modules/new/$', app_views.new_module),
-    url(r'^modules/$', app_views.modules_index),
+    url(r'^modules/', include('app.urls'), name="modules"),
+    url(r'^students/', include('app.urls'), name="students"),
     url(r'', include('social_django.urls'))
 ]

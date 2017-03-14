@@ -28,7 +28,7 @@ SECRET_KEY = 'v*kswpdyi3+*-=q4a)7&_!xwb%@udm1vi56r690!!j6e*p3^mn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'c751fae8.ngrok.io']
+ALLOWED_HOSTS = ['localhost', 'c751fae8.ngrok.io', 'signicheck.herokuapp.com']
 
 
 # Application definition

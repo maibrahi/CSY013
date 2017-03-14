@@ -1,4 +1,6 @@
 django
+dj-database-url
+gunicorn
 django-extensions
 django-jinja
 social-auth-app-django

@@ -147,7 +147,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "836925172590-206h1que9qel4vk5b014havdgjbae9r3.apps.googleusercontent.com"
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "E2vRykgQdDRxO26ikOSGwden"
-GOOGLE_WHITE_LISTED_DOMAINS = ['tcd.ie']
+SOCIAL_AUTH_GOOGLE_WHITE_LISTED_DOMAINS = ['tcd.ie']
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases

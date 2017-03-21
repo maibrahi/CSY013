@@ -47,14 +47,22 @@
     </div>
 
     <div class="seven wide column">
-      <div class="ui statistic">
-        <div class="label">
-          Overall attendance
+      {% if time_slots | length > 0 %}
+        <div class="ui statistic">
+          <div class="label">
+            Overall attendance
+          </div>
+          <div class="value">
+            {{ "{:.1%}".format(time_slots[0].get_attendance()) }}
+          </div>
         </div>
-        <div class="value">
-          {{ "{:.1%}".format(time_slots[0].get_attendance()) }}
+      {% else %}
+        <div class="ui statistic">
+          <div class="label">
+            No attendance information yet
+          </div>
         </div>
-      </div>
+      {% endif %}
 
       <div class="ui divider"></div>
 

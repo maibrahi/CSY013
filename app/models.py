@@ -83,3 +83,6 @@ class TimeSlot(models.Model):
     def get_students(self):
         return Student.objects.filter(id__in=self.ordered_student_ids)
 
+    def get_attendance(self):
+        return sum(self.ordered_attendance) / len(self.ordered_attendance)
+

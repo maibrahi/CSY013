@@ -34,7 +34,7 @@
                 </td>
                 <td>{{ slot.location }}</td>
                 <td>
-                  100%
+                  {{ "{:.1%}".format(slot.get_attendance()) }}
                 </td>
                 <td>
                   <a href="/time_slots/{{slot.id}}/sheet" class="ui button">Generate Sign-in Sheet</a>
@@ -47,6 +47,17 @@
     </div>
 
     <div class="seven wide column">
+      <div class="ui statistic">
+        <div class="label">
+          Overall attendance
+        </div>
+        <div class="value">
+          {{ "{:.1%}".format(time_slots[0].get_attendance()) }}
+        </div>
+      </div>
+
+      <div class="ui divider"></div>
+
       <div class="ui celled list">
         <h3>Students</h3>
         {% for student in students %}

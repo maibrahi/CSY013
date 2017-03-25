@@ -130,7 +130,7 @@ def modules_show(request, **kwargs):
 def sheet(request, **kwargs):
     # module = Module.objects.get(pk=kwargs["id"])
     time_slot = TimeSlot.objects.get(pk=kwargs["id"])
-    students = list(time_slot.get_students()) * 6
+    students = list(time_slot.get_students())
 
     page_count = ((len(students) - 1) // 10) + 1
 

@@ -129,17 +129,35 @@ def modules_show(request, **kwargs):
 # @render_to('modules/index.html')
 def sheet(request, **kwargs):
     # module = Module.objects.get(pk=kwargs["id"])
-    ts = TimeSlot.objects.get(pk=kwargs["id"])
-    students = ts.get_students()
-    table_rows = [[s.name(), s.id, ''] for s in students]
+    time_slot = TimeSlot.objects.get(pk=kwargs["id"])
+    students = list(time_slot.get_students()) * 6
 
-    t = SimpleTable(table_rows,
-        header_row=['Name', 'Student Number', 'Signature'],
-        css_class='mytable'
+    page_count = ((len(students) - 1) // 10) + 1
+
+    try:
+        page_number = int(kwargs["page_number"])
+        if page_number > page_count or page_number < 1:
+            raise(ValueError)
+
+    except ValueError as e:
+        raise Http404("Sign in sheet page not found!")
+
+    # page_number 1 is page_index 0...
+    page_index = page_number - 1
+
+    offset = 10 * page_index
+    students_for_page = students[(offset):(offset + 10)]
+
+    # table_rows = [[s.name(), s.id, ''] for s in students]
+
+    return render(
+        request,
+        'time_slots/sheet.html',
+        general_context(request, {
+            "slot": time_slot,
+            "students": students_for_page,
+            # "page_index": page_index,
+            "page_number": page_number,
+            "page_count": page_count
+        })
     )
-    page = HTMLPage()
-    page.add_table(t)
-    print(str(page))
-    return HttpResponse(str(page))
-    # return HttpResponse(table_rows.join(","))
-

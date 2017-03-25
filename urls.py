@@ -16,6 +16,6 @@ urlpatterns = [
     # url(r'^modules/new/$', app_views.new_module),
     url(r'^modules/$', app_views.modules_index, name="module_index"),
     url(r'^modules/(?P<id>[0-9]+)/$', app_views.modules_show, name="module_show"),
-    url(r'^time_slots/(?P<id>[0-9]+)/sheet/$', app_views.sheet, name="sheet_show"),
+    url(r'^time_slots/(?P<id>[0-9]+)/sheet/(?P<page_number>[0-9]+)$', app_views.sheet, name="sheet_show"),
     url(r'', include('social_django.urls'))
 ]

@@ -142,4 +142,3 @@ def sheet(request, **kwargs):
     print(str(page))
     return HttpResponse(str(page))
     # return HttpResponse(table_rows.join(","))
-

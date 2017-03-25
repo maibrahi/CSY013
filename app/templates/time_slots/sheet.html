@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Sheet</title>
+
+  <style type="text/css">
+    * {
+      box-sizing: border-box;
+      font-family: Arial;
+    }
+
+    html, body {
+      padding: 0;
+      margin: 0;
+      border: 0;
+      height: 100%;
+    }
+
+    body {
+      height: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      height: 100%;
+      table-layout:fixed;
+    }
+    table, td {
+       border: 1px solid black;
+    }
+
+    tr.header-row {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    td {
+      padding: 5px;
+      font-size: 0.8em;
+      overflow: hidden;
+      white-space:nowrap;
+      vertical-align: top;
+      /* width: calc(100% / 11); */
+    }
+
+    td.side-col {
+      width: 9%;
+    }
+    td.inner-col {
+      width: 27%;
+    }
+    td.invert-cell {
+      background-color: black;
+      color: white;
+    }
+  </style>
+
+</head>
+<body>
+
+  <table>
+    <tr>
+      <td class="side-col invert-cell"></td>
+
+      <td class="inner-col"></td>
+      <td class="inner-col">
+        {% if page_number > 1 %}
+          <a href="/time_slots/{{slot.id}}/sheet/{{page_number - 1}}">Previous Page</a>
+        {% endif %}
+
+        (page {{page_number}} of {{page_count}})
+
+        {% if page_number < page_count %}
+          <a href="/time_slots/{{slot.id}}/sheet/{{page_number + 1}}">Next Page</a>
+        {% endif %}
+      </td>
+      <td class="inner-col"></td>
+
+      <td class="side-col"></td>
+    </tr>
+
+    <tr>
+      <td class="side-col">1</td>
+
+      <td colspan="3">
+        {{ slot.module.code }} | {{ slot.module.name }} | {{ slot.printable_start() }}
+      </td>
+
+      <td class="side-col">_</td>
+    </tr>
+
+    <tr class="header-row">
+      <td class="side-col">2</td>
+
+      <td class="inner-col">Name</td>
+      <td class="inner-col">Student ID</td>
+      <td class="inner-col">Signature</td>
+
+      <td class="side-col">_</td>
+    </tr>
+
+    {% for student_index in range(10) %}
+      <tr>
+        <td class="side-col">{{ student_index + 3 }}</td>
+
+        {% if student_index < (students | length) %}
+          <td class="inner-col">{{students[student_index].name()}}</td>
+          <td class="inner-col">{{students[student_index].id}}</td>
+          <td class="inner-col"></td>
+        {% else %}
+          <td class="inner-col"></td>
+          <td class="inner-col"></td>
+          <td class="inner-col"></td>
+        {% endif %}
+
+        <td class="side-col">_</td>
+      </tr>
+    {% endfor %}
+
+
+    <tr>
+      <td class="side-col">13</td>
+
+      <td class="inner-col"></td>
+      <td class="inner-col"></td>
+      <td class="inner-col"></td>
+
+      <td class="side-col invert-cell"></td>
+    </tr>
+
+  </table>
+
+
+
+</body>
+</html>

@@ -66,7 +66,7 @@ class TimeSlot(models.Model):
     #     return self.start_time() + timedelta(minutes=50)
 
     def printable_start(self):
-        return self.start_time.strftime("%a, %d %b %H:%M")
+        return self.start_time.strftime("%Y-%m-%d %H:%M")
 
     def printable_duration(self):
         delta = self.end_time - self.start_time
@@ -82,4 +82,7 @@ class TimeSlot(models.Model):
 
     def get_students(self):
         return Student.objects.filter(id__in=self.ordered_student_ids)
+
+    def get_attendance(self):
+        return sum(self.ordered_attendance) / len(self.ordered_attendance)
 

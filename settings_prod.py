@@ -25,10 +25,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'v*kswpdyi3+*-=q4a)7&_!xwb%@udm1vi56r690!!j6e*p3^mn'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', 'c751fae8.ngrok.io', 'signicheck.herokuapp.com']
+ALLOWED_HOSTS = ['signicheck.herokuapp.com']
 
 
 # Application definition
@@ -147,6 +144,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "836925172590-206h1que9qel4vk5b014havdgjbae9r3.apps.googleusercontent.com"
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "E2vRykgQdDRxO26ikOSGwden"
+SOCIAL_AUTH_GOOGLE_WHITE_LISTED_DOMAINS = ['tcd.ie']
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -164,6 +162,7 @@ DATABASES = {
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
+SECURE_SSL_REDIRECT = True
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

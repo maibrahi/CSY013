@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2 class="ui dividing header">
+    {{ module.code }}
+    <div class="sub header">{{ module.name }}</div>
+  </h2>
+
+  <div class="ui grid">
+    <div class="nine wide column">
+      <div class="ui segment">
+        <h3>Time Slots</h3>
+        <table class="ui very basic collapsing celled table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Attendance</th>
+              <th>Sheet</th>
+            </tr>
+          </thead>
+          {% for slot in time_slots %}
+            <tbody>
+              <tr>
+                <td>
+                  <h4 class="ui image header">
+                    <!-- <img src="/images/avatar2/small/lena.png" class="ui mini rounded image"> -->
+                    <div class="content">
+                      {{ slot.printable_start() }}
+                      <div class="sub header">{{ slot.printable_duration() }}</div>
+                    </div>
+                  </h4>
+                </td>
+                <td>{{ slot.location }}</td>
+                <td>
+                  {{ "{:.1%}".format(slot.get_attendance()) }}
+                </td>
+                <td>
+                  <a href="/time_slots/{{slot.id}}/sheet/1" class="ui button">Generate Sign-in Sheet</a>
+                </td>
+              </tr>
+            </tbody>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+
+    <div class="seven wide column">
+      {% if time_slots | length > 0 %}
+        <div class="ui statistic">
+          <div class="label">
+            Overall attendance
+          </div>
+          <div class="value">
+            {{ "{:.1%}".format(time_slots[0].get_attendance()) }}
+          </div>
+        </div>
+      {% else %}
+        <div class="ui statistic">
+          <div class="label">
+            No attendance information yet
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="ui divider"></div>
+
+      <div class="ui celled list">
+        <h3>Students</h3>
+        {% for student in students %}
+          <div class="item">
+            <!-- <img class="ui avatar image" src="/images/avatar/small/helen.jpg"> -->
+            <div class="content">
+              <div class="header">
+                <a href="{{ "url student_show id" }}">{{student.name()}}</a>
+              </div>
+              {{student.id}} - 100% attendance
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+{% endblock content %}

@@ -162,14 +162,14 @@ class HTMLPage(object):
         self.css = css = """
             table.mytable {
                 font-family: times;
-                font-size:17px;
+                font-size:16px;
                 color:#000000;
                 border-width: 1px;
                 border-color: #eeeeee;
                 border-collapse: collapse;
                 background-color: #ffffff;
                 width: 100%;
-                max-width:550px;
+                max-width: 1024px;
                 table-layout:fixed;
             }
             table.mytable th {
@@ -260,5 +260,3 @@ def fit_data_to_columns(data, num_cols):
 #     page.add_table(table2)
 #     page.css = css
 #     page.save("test.html")
-
-

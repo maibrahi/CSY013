@@ -28,6 +28,14 @@ SECRET_KEY = 'v*kswpdyi3+*-=q4a)7&_!xwb%@udm1vi56r690!!j6e*p3^mn'
 ALLOWED_HOSTS = ['signicheck.herokuapp.com']
 
 
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+
+
+
+
 # Application definition
 
 INSTALLED_APPS = [

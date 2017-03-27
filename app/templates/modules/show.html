@@ -3,15 +3,21 @@
 {% block content %}
 
   <h2 class="ui dividing header">
-    {{ module.code }}
+    Module: {{ module.code }}
     <div class="sub header">{{ module.name }}</div>
   </h2>
 
-  <div class="ui grid">
+  <div class="ui stackable grid">
     <div class="nine wide column">
-      <div class="ui segment">
-        <h3>Time Slots</h3>
-        <table class="ui very basic collapsing celled table">
+      <h5 class="ui top attached header">
+        Time Slots
+      </h5>
+
+      <!-- <div class="ui attached segment">
+      </div> -->
+
+      <div class="ui bottom attached segment">
+        <table class="ui very basic table">
           <thead>
             <tr>
               <th>Time</th>
@@ -20,40 +26,48 @@
               <th>Sheet</th>
             </tr>
           </thead>
-          {% for slot in time_slots %}
-            <tbody>
+          <tbody>
+            {% for slot in timeslots %}
               <tr>
                 <td>
                   <h4 class="ui image header">
                     <!-- <img src="/images/avatar2/small/lena.png" class="ui mini rounded image"> -->
                     <div class="content">
-                      {{ slot.printable_start() }}
+                      {{ slot.start_time_wordy() }}
                       <div class="sub header">{{ slot.printable_duration() }}</div>
                     </div>
                   </h4>
                 </td>
                 <td>{{ slot.location }}</td>
                 <td>
-                  {{ "{:.1%}".format(slot.get_attendance()) }}
+                  {% if slot.is_attendance_recorded() %}
+                    {{ "{:.1%}".format(slot.get_attendance()) }}
+                  {% else %}
+                    n/a
+                  {% endif %}
                 </td>
                 <td>
-                  <a href="/time_slots/{{slot.id}}/sheet/1" class="ui button">Generate Sign-in Sheet</a>
+                  {% if slot.is_sheet_generated() %}
+                    <a href="/timeslots/{{slot.id}}" class="ui small primary button">View/Upload Sheet</a>
+                  {% else %}
+                    <a href="/timeslots/{{slot.id}}" class="ui small primary basic button">Generate Sheet</a>
+                  {% endif %}
                 </td>
               </tr>
-            </tbody>
-          {% endfor %}
+            {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
 
     <div class="seven wide column">
-      {% if time_slots | length > 0 %}
+      {% if timeslots | length > 0 %}
         <div class="ui statistic">
           <div class="label">
             Overall attendance
           </div>
           <div class="value">
-            {{ "{:.1%}".format(time_slots[0].get_attendance()) }}
+            {{ "{:.1%}".format(module.get_overall_attendance()) }}
           </div>
         </div>
       {% else %}
@@ -67,18 +81,8 @@
       <div class="ui divider"></div>
 
       <div class="ui celled list">
-        <h3>Students</h3>
-        {% for student in students %}
-          <div class="item">
-            <!-- <img class="ui avatar image" src="/images/avatar/small/helen.jpg"> -->
-            <div class="content">
-              <div class="header">
-                <a href="{{ "url student_show id" }}">{{student.name()}}</a>
-              </div>
-              {{student.id}} - 100% attendance
-            </div>
-          </div>
-        {% endfor %}
+        <h4 class="ui sub header">{{ students.count() }} students currently registered</h4>
+        {% include "_student_list.html" %}
       </div>
     </div>
   </div>

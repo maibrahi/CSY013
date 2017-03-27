@@ -1,0 +1,11 @@
+{% for student in students %}
+  <div class="item">
+    <!-- <img class="ui avatar image" src="/images/avatar/small/helen.jpg"> -->
+    <div class="content">
+      <div class="header">
+        <a href="{{ url('students_show', id=student.id) }}">{{student.name()}}</a>
+      </div>
+      {{student.id}}<!--  - 100% attendance -->
+    </div>
+  </div>
+{% endfor %}

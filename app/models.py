@@ -4,7 +4,7 @@ from social_django.models import AbstractUserSocialAuth, DjangoStorage, USER_MOD
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 
-import time
+import time, functools
 from datetime import datetime, timedelta
 
 class CustomUserSocialAuth(AbstractUserSocialAuth):
@@ -25,6 +25,14 @@ class Module(models.Model):
     def get_students(self):
         return Student.objects.filter(module_ids__contains=[self.id])
 
+    def get_overall_attendance(self):
+        timeslots = list(self.timeslot_set.all())
+        if len(timeslots) == 0:
+            return 0
+
+        slots_attendances = [slot.get_attendance() for slot in timeslots if slot.is_attendance_recorded()]
+        return sum(slots_attendances) / len(slots_attendances)
+
     def __str__(self):
         return self.name
 
@@ -40,6 +48,9 @@ class Student(models.Model):
     def get_modules(self):
         return Module.objects.filter(id__in=self.module_ids)
 
+    def get_timeslots(self):
+        return TimeSlot.objects.filter(ordered_student_ids__contains=[self.id])
+
     def __str__(self):
         return self.name()
 
@@ -54,7 +65,7 @@ class TimeSlot(models.Model):
     ordered_attendance = ArrayField(models.IntegerField())
 
     def __str__(self):
-        return self.module.code + " " + self.printable_start()
+        return self.module.code + " " + self.start_time_iso()
 
     # def save(self, *args, **kwargs):
     #     if not self.end_time():
@@ -65,7 +76,19 @@ class TimeSlot(models.Model):
     # def get_default_end_time(self):
     #     return self.start_time() + timedelta(minutes=50)
 
-    def printable_start(self):
+    def is_sheet_generated(self):
+        return len(self.ordered_student_ids) > 0
+    def is_attendance_recorded(self):
+        return self.is_sheet_generated() and len(self.ordered_attendance) > 0
+
+    def capture_student_ids(self):
+        students = list(self.module.get_students().order_by("first_name"))
+        self.ordered_student_ids = [s.id for s in students]
+
+    def start_time_wordy(self):
+        return self.start_time.strftime("%a, %d %b %H:%M")
+
+    def start_time_iso(self):
         return self.start_time.strftime("%Y-%m-%d %H:%M")
 
     def printable_duration(self):
@@ -81,8 +104,27 @@ class TimeSlot(models.Model):
             return str(minutes) + "min"
 
     def get_students(self):
-        return Student.objects.filter(id__in=self.ordered_student_ids)
+        return Student.objects.filter(id__in=self.ordered_student_ids).order_by("first_name")
 
+    @functools.lru_cache()
     def get_attendance(self):
+        if len(self.ordered_attendance) == 0:
+            return 0
         return sum(self.ordered_attendance) / len(self.ordered_attendance)
 
+    @functools.lru_cache()
+    def sheet_page_count(self):
+        return ((len(self.ordered_student_ids) - 1) // 10) + 1
+
+    def attendance_for_student_id(self, id):
+        try:
+            return True if self.ordered_attendance[self.ordered_student_ids.index(id)] else False
+        except (ValueError, IndexError) as e:
+            return None
+
+class SheetImage(models.Model):
+    class Meta:
+        managed = False
+
+    image = models.ImageField(upload_to='sheet_uploads/')
+    page_index = models.IntegerField()

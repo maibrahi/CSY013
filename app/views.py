@@ -6,6 +6,7 @@ from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout, login
 from django.shortcuts import render_to_response
+from django.contrib import messages
 
 from .utils import common_context
 
@@ -16,10 +17,12 @@ from social_django.utils import psa, load_strategy
 
 from .decorators import render_to
 
-from .models import Module, Student, TimeSlot
+from .models import *
+from .forms import *
 
-from simpletable import *
+from attendance import *
 
+import pdb
 
 def general_context(request, view_vars):
     return common_context(
@@ -95,7 +98,6 @@ def ajax_auth(request, backend):
 # Modules
 
 @login_required
-# @render_to('modules/index.html')
 def modules_index(request):
     modules = Module.objects.all()
 
@@ -106,8 +108,8 @@ def modules_index(request):
     )
 
 @login_required
-# @render_to('modules/index.html')
 def modules_show(request, **kwargs):
+    messages.add_message(request, messages.INFO, 'Hello world.')
     module = Module.objects.get(pk=kwargs["id"])
 
     students = module.get_students()
@@ -118,27 +120,118 @@ def modules_show(request, **kwargs):
         general_context(request, {
             "module": module,
             "students": students,
-            "time_slots": module.timeslot_set.all()
+            "timeslots": module.timeslot_set.all().order_by("start_time")
+        })
+    )
+
+@login_required
+def students_index(request, **kwargs):
+    students = Student.objects.all()
+
+    return render(
+        request,
+        'students/index.html',
+        general_context(request, {
+            "students": students,
+        })
+    )
+
+@login_required
+def students_show(request, **kwargs):
+    student = Student.objects.get(pk=kwargs["id"])
+
+    modules = student.get_modules()
+    module_ids = [module.id for module in modules]
+
+    return render(
+        request,
+        'students/show.html',
+        general_context(request, {
+            "modules": modules,
+            "student": student,
+            "timeslots": student.get_timeslots()
         })
     )
 
 
+@login_required
+def timeslots_show(request, **kwargs):
+    try: # get the timeslot
+        timeslot = TimeSlot.objects.get(pk=kwargs["id"])
+    except TimeSlot.DoesNotExist:
+        raise Http404("TimeSlot not found.")
+
+    if not timeslot.is_sheet_generated():
+        timeslot.capture_student_ids()
+        timeslot.save()
+
+    students = timeslot.get_students()
+
+    return render(
+        request,
+        'timeslots/show.html',
+        general_context(request, {
+            "slot": timeslot,
+            "form": SheetImageForm(),
+            "students": students,
+            "module": timeslot.module
+        })
+    )
 
 
 @login_required
-# @render_to('modules/index.html')
+def timeslots_sheet_upload(request, **kwargs):
+    try: # get the timeslot
+        timeslot = TimeSlot.objects.get(pk=kwargs["id"])
+    except TimeSlot.DoesNotExist:
+        raise Http404("TimeSlot not found.")
+
+    if request.method != 'POST':
+        raise Http404("POST ONLY")
+
+    form = SheetImageForm(request.POST, request.FILES)
+    if form.is_valid():
+        # pdb.set_trace()
+        # form.save()
+        # form.cleaned_data['image'].file
+
+        # page_index = int(form.cleaned_data["page_index"])
+
+        a = Attendance()
+        sheet_list = [form.cleaned_data['image'].file]
+        attendance_list = a.get_attendance_list(sheet_list, len(timeslot.ordered_student_ids))
+
+
+        print(attendance_list)
+        timeslot.ordered_attendance = attendance_list
+        # print(page_index)
+        timeslot.save()
+
+        # return redirect('home')
+        return redirect("timeslots_show", id=timeslot.id)
+    else:
+        raise Http404("FileUpload error")
+
+
+@login_required
 def sheet(request, **kwargs):
     # module = Module.objects.get(pk=kwargs["id"])
-    time_slot = TimeSlot.objects.get(pk=kwargs["id"])
-    students = list(time_slot.get_students())
 
-    page_count = ((len(students) - 1) // 10) + 1
+    try: # get the timeslot
+        timeslot = TimeSlot.objects.get(pk=kwargs["id"])
+    except TimeSlot.DoesNotExist:
+        raise Http404("TimeSlot not found.")
 
-    try:
+    if "page_number" not in kwargs: # redirect to page 1 if no page given
+        return redirect("sheet_show", id=timeslot.id, page_number=1)
+
+    students = list(timeslot.get_students())
+    page_count = timeslot.sheet_page_count()
+
+    try: # validate pagenumber
         page_number = int(kwargs["page_number"])
         if page_number > page_count or page_number < 1:
             raise(ValueError)
-
     except ValueError as e:
         raise Http404("Sign in sheet page not found!")
 
@@ -152,9 +245,9 @@ def sheet(request, **kwargs):
 
     return render(
         request,
-        'time_slots/sheet.html',
+        'timeslots/sheet.html',
         general_context(request, {
-            "slot": time_slot,
+            "slot": timeslot,
             "students": students_for_page,
             # "page_index": page_index,
             "page_number": page_number,

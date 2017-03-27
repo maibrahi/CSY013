@@ -1,6 +1,14 @@
 from social_core.backends.google import GooglePlusAuth
 from social_core.backends.utils import load_backends
+from django.contrib.messages import constants as messages
 
+MESSAGE_TAGS = {
+    messages.DEBUG: 'warning',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'negative'
+}
 
 def is_authenticated(user):
     if callable(user.is_authenticated):

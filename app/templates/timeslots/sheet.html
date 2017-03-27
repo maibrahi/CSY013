@@ -39,9 +39,9 @@
 
     td {
       padding: 5px;
-      font-size: 0.8em;
+      font-size: 1em;
       overflow: hidden;
-      white-space:nowrap;
+      white-space: nowrap;
       vertical-align: top;
       /* width: calc(100% / 11); */
     }
@@ -66,17 +66,7 @@
       <td class="side-col invert-cell"></td>
 
       <td class="inner-col"></td>
-      <td class="inner-col">
-        {% if page_number > 1 %}
-          <a href="/time_slots/{{slot.id}}/sheet/{{page_number - 1}}">Previous Page</a>
-        {% endif %}
-
-        (page {{page_number}} of {{page_count}})
-
-        {% if page_number < page_count %}
-          <a href="/time_slots/{{slot.id}}/sheet/{{page_number + 1}}">Next Page</a>
-        {% endif %}
-      </td>
+      <td class="inner-col">_</td>
       <td class="inner-col"></td>
 
       <td class="side-col"></td>
@@ -86,7 +76,7 @@
       <td class="side-col">1</td>
 
       <td colspan="3">
-        {{ slot.module.code }} | {{ slot.module.name }} | {{ slot.printable_start() }}
+        {{ slot.module.code }} | {{ slot.module.name }} | {{ slot.start_time_iso() }}
       </td>
 
       <td class="side-col">_</td>
@@ -125,8 +115,18 @@
       <td class="side-col">13</td>
 
       <td class="inner-col"></td>
-      <td class="inner-col"></td>
-      <td class="inner-col"></td>
+      <td class="inner-col">
+        {% if page_number > 1 %}
+          <a href="/timeslots/{{slot.id}}/sheet/{{page_number - 1}}">Previous Page</a>
+        {% endif %}
+
+        (page {{page_number}} of {{page_count}})
+
+        {% if page_number < page_count %}
+          <a href="/timeslots/{{slot.id}}/sheet/{{page_number + 1}}">Next Page</a>
+        {% endif %}
+      </td>
+      <td class="inner-col">SigniCheck</td>
 
       <td class="side-col invert-cell"></td>
     </tr>

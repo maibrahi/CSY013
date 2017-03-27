@@ -6,3 +6,5 @@ django-jinja
 social-auth-app-django
 psycopg2
 pdfkit
+pillow
+bpython

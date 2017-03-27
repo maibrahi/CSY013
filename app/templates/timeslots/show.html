@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="ui stackable grid">
+    <div class="nine wide column">
+      <a class="ui button fluid" href="/modules/{{module.id}}">
+        <i class="ui icon left arrow"></i>
+        Back to Module
+      </a>
+
+      <h5 class="ui top attached message">
+        <div class="header">
+          {{ module.code }} {{ module.name }}
+        </div>
+        <p>
+          {{ slot.start_time_iso() }} for {{ slot.printable_duration() }}
+        </p>
+      </h5>
+
+      <div class="ui attached segment">
+        <a href="/timeslots/{{slot.id}}/sheet/1" target="_blank" class="ui button primary fluid">
+          View/Print Sign-in Sheet
+        </a>
+      </div>
+
+      <div class="ui bottom attached message">
+        <h4 class="ui sub header">Upload Sheets</h4>
+
+        <form class="ui form" method="post" enctype="multipart/form-data" action="/timeslots/{{slot.id}}/upload">
+          {% csrf_token %}
+          <div class="two fields">
+            <div class="field">{{ form }}</div>
+            <div class="field">
+              <label>Page Number</label>
+              <select class="ui search dropdown" name="page_index">
+                {% for p in range(slot.sheet_page_count()) %}
+                  <option value="{{ p }}">{{p + 1}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <button class="ui submit button fluid" type="submit">Upload</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="seven wide column">
+      <div class="ui large celled list">
+        <h4 class="ui sub header">{{ students | length }} students on sheet</h4>
+        {% for student in students %}
+          <div class="item">
+            <!-- <img class="ui avatar image" src="/images/avatar/small/helen.jpg"> -->
+            <div class="content">
+              <div class="header">
+                <a href="{{ url('students_show', id=student.id) }}">{{student.name()}}</a>
+              </div>
+              {{student.id}} -
+              {% set att = slot.attendance_for_student_id(student.id) %}
+              {% if att %}
+                <span class="ui green horizontal label"><i class="ui checkmark icon"></i> attended</span>
+              {% elif att == False %}
+                <span class="ui red horizontal label"><i class="ui remove icon"></i> missed</span>
+              {% else %}
+                <span class="ui horizontal label"><i class="ui help icon"></i></span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- <iframe src="/timeslots/{{slot.id}}/sheet/1"></iframe> -->
+{% endblock %}
+

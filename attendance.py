@@ -19,9 +19,9 @@ class Attendance:
         total_cols = 11
         total_rows = 14
 
-        image = Image.open("att4.png").convert('L')
-        picture = Image.new( image.mode, image.size)
-        picture_new = picture.load()
+        # image = Image.open("att4.png").convert('L')
+        # picture = Image.new( image.mode, image.size)
+        # picture_new = picture.load()
 
         rows = len(pixel_map)
         cols = len(pixel_map[0])
@@ -41,7 +41,7 @@ class Attendance:
                     row_index = base_row + (row_len*student_number) + row
                     col_index = base_col+col
                     current_pixel = pixel_map[row_index][col_index]
-                    picture_new[col, row] = (current_pixel)
+                    # picture_new[col, row] = (current_pixel)
                     if(current_pixel < pixel_threshold):
                         coloured_pixels += 1
 
@@ -51,7 +51,7 @@ class Attendance:
             else:
                 print(str(coloured_pixels) + " coloured pixels. Threshold is: " + str(box_threshold))
                 attendance.append(0)
-            picture.save('box1' + str(student) + '.png')
+            # picture.save('box1' + str(student) + '.png')
         return attendance
 
     def get_attendance_list(self, sheets, total_students):

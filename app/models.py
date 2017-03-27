@@ -27,10 +27,12 @@ class Module(models.Model):
 
     def get_overall_attendance(self):
         timeslots = list(self.timeslot_set.all())
-        if len(timeslots) == 0:
-            return 0
 
         slots_attendances = [slot.get_attendance() for slot in timeslots if slot.is_attendance_recorded()]
+
+        if len(slots_attendances) == 0:
+            return 0
+
         return sum(slots_attendances) / len(slots_attendances)
 
     def __str__(self):

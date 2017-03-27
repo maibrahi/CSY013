@@ -112,7 +112,7 @@ class TimeSlot(models.Model):
     def get_attendance(self):
         if len(self.ordered_attendance) == 0:
             return 0
-        return sum(self.ordered_attendance) / len(self.ordered_attendance)
+        return sum(self.ordered_attendance) / len(self.ordered_student_ids)
 
     @functools.lru_cache()
     def sheet_page_count(self):

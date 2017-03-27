@@ -38,6 +38,19 @@ class Module(models.Model):
     def __str__(self):
         return self.name
 
+    def get_attendance_for_student(self, student):
+        slots = student.get_timeslots().filter(module=self)
+        attendance = [
+            a for a in
+            [slot.attendance_for_student_id(student.id) for slot in slots]
+            if a is not None
+        ]
+
+        if len(attendance) is 0:
+            return 0
+
+        return sum(attendance) / len(attendance)
+
 
 class Student(models.Model):
     module_ids = ArrayField(models.IntegerField())

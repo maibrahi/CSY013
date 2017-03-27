@@ -9,6 +9,7 @@
     {% endif %}
 
     <div class="social">
+      <h5 class="ui sub header">Login</h5>
       {% for sublist in available_backends|social_backends|slice_by(10) %}
         <div class="row">
           {% for name, backend in sublist %}

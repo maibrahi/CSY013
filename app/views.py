@@ -1,12 +1,13 @@
 import json
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout, login
 from django.shortcuts import render_to_response
 from django.contrib import messages
+from django.db.models import Q
 
 from .utils import common_context
 
@@ -137,19 +138,32 @@ def students_index(request, **kwargs):
     )
 
 @login_required
+def students_search(request, **kwargs):
+    students = Student.objects.filter(
+        Q(first_name__icontains=request.GET.get('q', ''))
+        |
+        Q(last_name__icontains=request.GET.get('q', ''))
+    )
+
+    return JsonResponse({ "results": [
+        { "path": "/students/" + str(student.id), "name": student.name() }
+        for student in students
+    ]})
+
+@login_required
 def students_show(request, **kwargs):
     student = Student.objects.get(pk=kwargs["id"])
+    slots = student.get_timeslots()
 
     modules = student.get_modules()
-    module_ids = [module.id for module in modules]
+    # module_ids = [module.id for module in modules]
 
     return render(
         request,
         'students/show.html',
         general_context(request, {
             "modules": modules,
-            "student": student,
-            "timeslots": student.get_timeslots()
+            "student": student
         })
     )
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
@@ -17,6 +18,7 @@ urlpatterns = [
     # url(r'^modules/new/$', app_views.new_module),
 
     url(r'^students/$', app_views.students_index, name="students_index"),
+    url(r'^students/search/$', app_views.students_search, name="students_search"),
     url(r'^students/(?P<id>[0-9]+)/$', app_views.students_show, name="students_show"),
 
     url(r'^modules/$', app_views.modules_index, name="modules_index"),
@@ -31,3 +33,9 @@ urlpatterns = [
 
     url(r'', include('social_django.urls'))
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

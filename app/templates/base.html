@@ -49,8 +49,11 @@
             </div>
           </div>
         {% endif %}
-        <div class="ui right item">
-          <div class="ui input"><input type="text" placeholder="Search..."></div>
+        <div class="ui search student-search right item">
+          <div class="ui icon input">
+            <input class="prompt" type="text" placeholder="Search...">
+            <i class="search icon"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -58,6 +61,7 @@
     <br>
 
     <div class="ui container">
+
       {% if not messages %}
         <div class="messages">
           {% for message in messages %}
@@ -76,13 +80,26 @@
     </div>
 
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://login.persona.org/include.js" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- <script src="https://login.persona.org/include.js" type="text/javascript"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
     <script type="text/javascript">
       $('.message .close').on('click', function() {
         $(this).closest('.message').transition('fade');
       });
+
+      $('.student-search').search({
+        apiSettings: {
+          url: '/students/search?q={query}'
+        },
+        fields: {
+          results : 'results',
+          title   : 'name',
+          url     : 'path'
+        },
+        minCharacters : 1
+      });
+
     </script>
   </body>
 </html>

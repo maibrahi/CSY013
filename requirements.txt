@@ -8,3 +8,4 @@ psycopg2
 pdfkit
 pillow
 bpython
+django-debug-toolbar

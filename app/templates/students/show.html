@@ -10,14 +10,24 @@
         <div class="sub header">{{ student.id }}</div>
       </h2>
 
-      <div class="ui top attached fluid message">
-        <div class="header">{{student.first_name}}'s Modules</div>
-      </div>
-      <div class="ui bottom attached fluid segment">
-        {% for module in student.get_modules() %}
-          <button class="ui button">{{ module.name }}</button>
-        {% endfor %}
-      </div>
+      {% for module in student.get_modules() %}
+        <div class="ui raised fluid segments">
+          <div class="ui top attached message">
+            <div class="header"><a href="/modules/{{module.id}}">{{ module.name }}</a></div>
+          </div>
+
+          <div class="ui attached segment">
+            <div class="ui tiny horizontal statistic">
+              <div class="value">
+                {{ "{:.1%}".format(module.get_attendance_for_student(student)) }}
+              </div>
+              <div class="label">
+                attended
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
   </div>
 

@@ -121,13 +121,13 @@ class TimeSlot(models.Model):
     def get_students(self):
         return Student.objects.filter(id__in=self.ordered_student_ids).order_by("first_name")
 
-    @functools.lru_cache()
+    # @functools.lru_cache()
     def get_attendance(self):
         if not self.is_attendance_recorded():
             return 0
         return sum(self.ordered_attendance) / len(self.ordered_student_ids)
 
-    @functools.lru_cache()
+    # @functools.lru_cache()
     def sheet_page_count(self):
         return ((len(self.ordered_student_ids) - 1) // 10) + 1
 

@@ -110,7 +110,7 @@ class TimeSlot(models.Model):
 
     @functools.lru_cache()
     def get_attendance(self):
-        if len(self.ordered_attendance) == 0:
+        if not self.is_attendance_recorded():
             return 0
         return sum(self.ordered_attendance) / len(self.ordered_student_ids)
 
